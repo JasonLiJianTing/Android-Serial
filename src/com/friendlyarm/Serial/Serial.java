@@ -5,6 +5,7 @@ import java.util.Arrays;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,59 +21,24 @@ public class Serial extends Activity
 	private Button closeSerial;
 	private Button sendSerial;
 	private int fd;
-	Handler handler = new Handler();
-	Handler sendHandler = new Handler();
+	byte[] buf;
+	private Handler revHandler = new Handler()
+	{
 
-//	Runnable runnable = new Runnable()
-//	{
-//		@Override
-//		public void run()
-//		{
-//			ReadSerial();
-//			// handler.postDelayed(this, 3000);
-//			handler.post(this);
-//		}
-//	};
-//
-//	Runnable sendrunnable = new Runnable()
-//	{
-//		@Override
-//		public void run()
-//		{
-//			SendSerial();
-//			// handler.postDelayed(this, 3000);
-//			handler.post(this);
-//		}
-//	};
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see android.os.Handler#handleMessage(android.os.Message)
+		 */
+		@Override
+		public void handleMessage(Message msg)
+		{
+			rev_tv.setText(rev_tv.getText() + "  " + Arrays.toString(buf));
 
-	/**
-	 * 接收函数
-	 */
-//	public void ReadSerial()
-//	{
-//		// data1.setText(null);
-//		// System.out.println(fd);
-//		int m = HardwareControler.select(fd, 2, 20);
-//		// System.out.println("a");
-//		// System.out.println(m);
-//		if (m == 1)
-//		{
-//			byte[] buf = new byte[10];
-//			try
-//			{
-//				Thread.sleep(90);
-//			} catch (InterruptedException e)
-//			{
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			int n = HardwareControler.read(fd, buf, buf.length);
-//			// System.out.println("b");
-//			// System.out.println(n);
-//			System.out.println(Arrays.toString(buf));
-//			data1.setText(data1.getText() + "  " + Arrays.toString(buf));
-//		}
-//	}
+			super.handleMessage(msg);
+		}
+
+	};
 
 	/**
 	 * 发送函数，直接调用友善之臂提供的函数接口 我这里将(EditText)senddata中的内容变字符串再变bytes[] 接收到的结果有点不对
@@ -124,7 +90,6 @@ public class Serial extends Activity
 
 		new Thread(new Runnable()
 		{
-
 			@Override
 			public void run()
 			{
@@ -133,7 +98,7 @@ public class Serial extends Activity
 					int m = HardwareControler.select(fd, 2, 20);
 					if (m == 1)
 					{
-						byte[] buf = new byte[10];
+						buf = new byte[10];
 						try
 						{
 							Thread.sleep(90);
@@ -143,8 +108,7 @@ public class Serial extends Activity
 						}
 						int n = HardwareControler.read(fd, buf, buf.length);
 						System.out.println(Arrays.toString(buf));
-						rev_tv.setText(rev_tv.getText() + "  "
-								+ Arrays.toString(buf));
+						revHandler.sendEmptyMessage(0x55);
 					}
 				}
 			}
