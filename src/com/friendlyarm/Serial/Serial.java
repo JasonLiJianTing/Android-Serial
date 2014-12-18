@@ -23,55 +23,63 @@ public class Serial extends Activity
 	Handler handler = new Handler();
 	Handler sendHandler = new Handler();
 
-	Runnable runnable = new Runnable()
-	{
-		@Override
-		public void run()
-		{
-			ReadSerial();
-			// handler.postDelayed(this, 3000);
-			handler.post(this);
-		}
-	};
-
-	Runnable sendrunnable = new Runnable()
-	{
-		@Override
-		public void run()
-		{
-			SendSerial();
-			// handler.postDelayed(this, 3000);
-			handler.post(this);
-		}
-	};
+//	Runnable runnable = new Runnable()
+//	{
+//		@Override
+//		public void run()
+//		{
+//			ReadSerial();
+//			// handler.postDelayed(this, 3000);
+//			handler.post(this);
+//		}
+//	};
+//
+//	Runnable sendrunnable = new Runnable()
+//	{
+//		@Override
+//		public void run()
+//		{
+//			SendSerial();
+//			// handler.postDelayed(this, 3000);
+//			handler.post(this);
+//		}
+//	};
 
 	/**
 	 * 接收函数
 	 */
-	public void ReadSerial()
+//	public void ReadSerial()
+//	{
+//		// data1.setText(null);
+//		// System.out.println(fd);
+//		int m = HardwareControler.select(fd, 2, 20);
+//		// System.out.println("a");
+//		// System.out.println(m);
+//		if (m == 1)
+//		{
+//			byte[] buf = new byte[10];
+//			try
+//			{
+//				Thread.sleep(90);
+//			} catch (InterruptedException e)
+//			{
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			int n = HardwareControler.read(fd, buf, buf.length);
+//			// System.out.println("b");
+//			// System.out.println(n);
+//			System.out.println(Arrays.toString(buf));
+//			data1.setText(data1.getText() + "  " + Arrays.toString(buf));
+//		}
+//	}
+
+	/**
+	 * 发送函数，直接调用友善之臂提供的函数接口 我这里将(EditText)senddata中的内容变字符串再变bytes[] 接收到的结果有点不对
+	 */
+	public void SendSerial()
 	{
-		// data1.setText(null);
-		// System.out.println(fd);
-		int m = HardwareControler.select(fd, 2, 20);
-		// System.out.println("a");
-		// System.out.println(m);
-		if (m == 1)
-		{
-			byte[] buf = new byte[10];
-			try
-			{
-				Thread.sleep(90);
-			} catch (InterruptedException e)
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			int n = HardwareControler.read(fd, buf, buf.length);
-			// System.out.println("b");
-			// System.out.println(n);
-			System.out.println(Arrays.toString(buf));
-			data1.setText(data1.getText() + "  " + Arrays.toString(buf));
-		}
+		HardwareControler.write(fd, send_et.getText().toString().getBytes());
 	}
 
 	@Override
@@ -90,20 +98,16 @@ public class Serial extends Activity
 		// TODO Auto-generated method stub
 		fd = HardwareControler.openSerialPort("/dev/s3c2410_serial3", 115200,
 				8, 1);
-		handler.post(runnable);
-		sendHandler.post(sendrunnable);
-		// System.out.println("启动串口线程");
-		fdText.setText(fdText.getText() + "打开线程");
 
+		/**
+		 * 关闭串口
+		 */
 		closeSerial.setOnClickListener(new Button.OnClickListener()
 		{
 			@Override
 			public void onClick(View v)
 			{
-				// TODO Auto-generated method stub
-				handler.removeCallbacks(runnable);
 				HardwareControler.close(fd);
-				fdText.setText("关闭串口");
 			}
 		});
 
@@ -117,13 +121,33 @@ public class Serial extends Activity
 				SendSerial();
 			}
 		});
-	}
 
-	/**
-	 * 发送函数，直接调用友善之臂提供的函数接口 我这里将(EditText)senddata中的内容变字符串再变bytes[] 接收到的结果有点不对
-	 */
-	public void SendSerial()
-	{
-		HardwareControler.write(fd, senddata.getText().toString().getBytes());
+		new Thread(new Runnable()
+		{
+
+			@Override
+			public void run()
+			{
+				while (true)
+				{
+					int m = HardwareControler.select(fd, 2, 20);
+					if (m == 1)
+					{
+						byte[] buf = new byte[10];
+						try
+						{
+							Thread.sleep(90);
+						} catch (InterruptedException e)
+						{
+							e.printStackTrace();
+						}
+						int n = HardwareControler.read(fd, buf, buf.length);
+						System.out.println(Arrays.toString(buf));
+						rev_tv.setText(rev_tv.getText() + "  "
+								+ Arrays.toString(buf));
+					}
+				}
+			}
+		}).start();
 	}
 }
