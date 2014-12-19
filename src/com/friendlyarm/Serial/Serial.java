@@ -40,7 +40,6 @@ public class Serial extends Activity
 
 			super.handleMessage(msg);
 		}
-
 	};
 
 	/**
