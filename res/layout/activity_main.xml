@@ -1,5 +1,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:baselineAligned="false"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
@@ -19,7 +20,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="接收窗口" />
+            android:text="@string/receive_textview" />
 
         <TextView
             android:id="@+id/rev_tv"
@@ -38,9 +39,10 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="发送窗口" />
+            android:text="@string/send_edittext" />
 
         <EditText
+            android:hint="@string/data_to_send"
             android:id="@+id/send_et"
             android:layout_width="match_parent"
             android:layout_height="60dp"
@@ -57,7 +59,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
-                android:text="打开串口" />
+                android:text="@string/open_serial" />
 
             <Button
                 android:id="@+id/closeSerial_bt"
@@ -65,7 +67,7 @@
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@id/openSerial_bt"
                 android:layout_alignTop="@id/openSerial_bt"
-                android:text="关闭串口"
+                android:text="@string/close_serial"
                 android:enabled="false" />
 
             <Button
@@ -74,7 +76,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignLeft="@id/openSerial_bt"
                 android:layout_below="@id/openSerial_bt"
-                android:text="发送数据" />
+                android:text="@string/send_data" />
 
             <Button
                 android:id="@+id/clear_bt"
@@ -83,7 +85,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignTop="@id/sendSerial_bt"
                 android:layout_toRightOf="@id/sendSerial_bt"
-                android:text="清空数据" />
+                android:text="@string/clear_data" />
         </RelativeLayout>
     </LinearLayout>
 

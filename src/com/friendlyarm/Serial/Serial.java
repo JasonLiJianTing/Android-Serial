@@ -1,7 +1,7 @@
 package com.friendlyarm.Serial;
 
 import java.util.Arrays;
-
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.friendlyarm.AndroidSDK.HardwareControler;
 
 public class Serial extends Activity
@@ -23,24 +22,19 @@ public class Serial extends Activity
 	private Button closeSerial;
 	private Button sendSerial;
 	private Button clearSerial;
-	
+
 	private int fd;
 	byte[] buf = new byte[2048];
 
 	Thread listen;								// 初始化监听线程
 	Boolean openFlag = false;					// 标记串口是否打开
 
+	@SuppressLint("HandlerLeak")
 	private Handler revHandler = new Handler()
 	{
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see android.os.Handler#handleMessage(android.os.Message)
-		 */
 		@Override
 		public void handleMessage(Message msg)
 		{
-			int i = 0;
 			rev_tv.setText(rev_tv.getText() + "  " + (String) msg.obj);
 			Log.d("MC", (String) msg.obj);
 
@@ -50,7 +44,7 @@ public class Serial extends Activity
 	};
 
 	/**
-	 * 发送函数，直接调用友善之臂提供的函数接口 我这里将(EditText)senddata中的内容变字符串再变bytes[] 接收到的结果有点不对
+	 * 发送函数
 	 */
 	public void SendSerial()
 	{
@@ -64,7 +58,7 @@ public class Serial extends Activity
 		openSerial = (Button) findViewById(R.id.openSerial_bt);
 		closeSerial = (Button) findViewById(R.id.closeSerial_bt);
 		sendSerial = (Button) findViewById(R.id.sendSerial_bt);
-		clearSerial = (Button)findViewById(R.id.clear_bt);
+		clearSerial = (Button) findViewById(R.id.clear_bt);
 	}
 
 	@Override
@@ -85,8 +79,9 @@ public class Serial extends Activity
 				fd = HardwareControler.openSerialPort("/dev/s3c2410_serial3",
 						115200, 8, 1);
 				openFlag = true;
-				Toast.makeText(getApplicationContext(), "打开串口成功",
-						Toast.LENGTH_SHORT).show();
+				Toast.makeText(getApplicationContext(),
+						getString(R.string.open_sucssess), Toast.LENGTH_SHORT)
+						.show();
 				openSerial.setEnabled(false);
 				closeSerial.setEnabled(true);
 
@@ -110,7 +105,7 @@ public class Serial extends Activity
 								{
 									try
 									{
-										Thread.sleep(90);				//睡眠等待数据完全接收
+										Thread.sleep(90);				// 睡眠等待数据完全接收
 									} catch (InterruptedException e)
 									{
 										e.printStackTrace();
@@ -152,8 +147,9 @@ public class Serial extends Activity
 				openFlag = false;
 				openSerial.setEnabled(true);
 				closeSerial.setEnabled(false);
-				Toast.makeText(getApplicationContext(), "关闭串口成功",
-						Toast.LENGTH_SHORT).show();
+				Toast.makeText(getApplicationContext(),
+						getString(R.string.close_sucssess), Toast.LENGTH_SHORT)
+						.show();
 			}
 		});
 
