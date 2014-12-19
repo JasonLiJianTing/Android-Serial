@@ -3,10 +3,10 @@ package com.friendlyarm.Serial;
 import java.util.Arrays;
 
 import android.app.Activity;
-import android.app.Application;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,15 +22,16 @@ public class Serial extends Activity
 	private Button openSerial;
 	private Button closeSerial;
 	private Button sendSerial;
+	private Button clearSerial;
+	
 	private int fd;
-	byte[] buf;
-	
-	Thread listen;								//初始化监听线程 
-	Boolean openFlag = false;					//标记串口是否打开
-	
+	byte[] buf = new byte[2048];
+
+	Thread listen;								// 初始化监听线程
+	Boolean openFlag = false;					// 标记串口是否打开
+
 	private Handler revHandler = new Handler()
 	{
-
 		/*
 		 * (non-Javadoc)
 		 * 
@@ -39,7 +40,9 @@ public class Serial extends Activity
 		@Override
 		public void handleMessage(Message msg)
 		{
-			rev_tv.setText(rev_tv.getText() + "  " + Arrays.toString(buf));
+			int i = 0;
+			rev_tv.setText(rev_tv.getText() + "  " + (String) msg.obj);
+			Log.d("MC", (String) msg.obj);
 
 			super.handleMessage(msg);
 		}
@@ -61,6 +64,7 @@ public class Serial extends Activity
 		openSerial = (Button) findViewById(R.id.openSerial_bt);
 		closeSerial = (Button) findViewById(R.id.closeSerial_bt);
 		sendSerial = (Button) findViewById(R.id.sendSerial_bt);
+		clearSerial = (Button)findViewById(R.id.clear_bt);
 	}
 
 	@Override
@@ -81,10 +85,11 @@ public class Serial extends Activity
 				fd = HardwareControler.openSerialPort("/dev/s3c2410_serial3",
 						115200, 8, 1);
 				openFlag = true;
-				Toast.makeText(getApplicationContext(), "打开串口成功", Toast.LENGTH_SHORT).show();
+				Toast.makeText(getApplicationContext(), "打开串口成功",
+						Toast.LENGTH_SHORT).show();
 				openSerial.setEnabled(false);
 				closeSerial.setEnabled(true);
-				
+
 				/**
 				 * 启动线程监听数据
 				 */
@@ -96,19 +101,30 @@ public class Serial extends Activity
 						while (openFlag)
 						{
 							int m = HardwareControler.select(fd, 2, 20);
+							int n;
+							String text = "";
 							if (m == 1)
 							{
-								buf = new byte[10];
-								try
+								while ((n = HardwareControler.read(fd, buf,
+										buf.length)) > 0)
 								{
-									Thread.sleep(90);
-								} catch (InterruptedException e)
-								{
-									e.printStackTrace();
-								}
-								int n = HardwareControler.read(fd, buf, buf.length);
+									try
+									{
+										Thread.sleep(90);				//睡眠等待数据完全接收
+									} catch (InterruptedException e)
+									{
+										e.printStackTrace();
+									}
+									for (int i = 0; i < n; i++)
+									{
+										text += (char) buf[i];
+									}
+								};
+								Log.d("MC", "n:" + n);
+								Message message = Message.obtain();
+								message.obj = text;
+								revHandler.sendMessage(message);
 								System.out.println(Arrays.toString(buf));
-								revHandler.sendEmptyMessage(0x55);
 							}
 							try
 							{
@@ -136,7 +152,8 @@ public class Serial extends Activity
 				openFlag = false;
 				openSerial.setEnabled(true);
 				closeSerial.setEnabled(false);
-				Toast.makeText(getApplicationContext(), "关闭串口成功", Toast.LENGTH_SHORT).show();
+				Toast.makeText(getApplicationContext(), "关闭串口成功",
+						Toast.LENGTH_SHORT).show();
 			}
 		});
 
@@ -151,6 +168,17 @@ public class Serial extends Activity
 			}
 		});
 
-		
+		/**
+		 * 清空数据
+		 */
+		clearSerial.setOnClickListener(new Button.OnClickListener()
+		{
+			@Override
+			public void onClick(View v)
+			{
+				rev_tv.setText(null);
+				send_et.setText(null);
+			}
+		});
 	}
 }
