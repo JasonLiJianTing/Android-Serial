@@ -43,7 +43,7 @@
         <EditText
             android:id="@+id/send_et"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:background="@android:color/darker_gray" />
 
         <RelativeLayout
@@ -65,7 +65,8 @@
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@id/openSerial_bt"
                 android:layout_alignTop="@id/openSerial_bt"
-                android:text="关闭串口" />
+                android:text="关闭串口"
+                android:enabled="false" />
 
             <Button
                 android:id="@+id/sendSerial_bt"

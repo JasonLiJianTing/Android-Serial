@@ -3,6 +3,7 @@ package com.friendlyarm.Serial;
 import java.util.Arrays;
 
 import android.app.Activity;
+import android.app.Application;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.friendlyarm.AndroidSDK.HardwareControler;
 
@@ -79,6 +81,9 @@ public class Serial extends Activity
 				fd = HardwareControler.openSerialPort("/dev/s3c2410_serial3",
 						115200, 8, 1);
 				openFlag = true;
+				Toast.makeText(getApplicationContext(), "打开串口成功", Toast.LENGTH_SHORT).show();
+				openSerial.setEnabled(false);
+				closeSerial.setEnabled(true);
 				
 				/**
 				 * 启动线程监听数据
@@ -129,6 +134,9 @@ public class Serial extends Activity
 			{
 				HardwareControler.close(fd);
 				openFlag = false;
+				openSerial.setEnabled(true);
+				closeSerial.setEnabled(false);
+				Toast.makeText(getApplicationContext(), "关闭串口成功", Toast.LENGTH_SHORT).show();
 			}
 		});
 
