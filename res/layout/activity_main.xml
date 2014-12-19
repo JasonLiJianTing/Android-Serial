@@ -7,12 +7,13 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".HardwareControler" >
+    tools:context=".HardwareControler" 
+    android:background="@android:color/holo_green_dark">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="2"
+        android:layout_weight="1"
         android:orientation="vertical" >
 
         <TextView
@@ -23,13 +24,15 @@
         <TextView
             android:id="@+id/rev_tv"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:background="@android:color/darker_gray" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="2"
+        android:layout_marginLeft="10dp"
+        android:layout_weight="1"
         android:orientation="vertical" >
 
         <TextView
@@ -40,34 +43,47 @@
         <EditText
             android:id="@+id/send_et"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:gravity="center"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="3"
-        android:orientation="vertical" >
-
-        <Button
-            android:id="@+id/openSerial"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="打开串口" />
+            android:background="@android:color/darker_gray" />
 
-        <Button
-            android:id="@+id/closeSerial"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="关闭串口" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal" >
 
-        <Button
-            android:id="@+id/sendSerial"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="发送数据" />
+            <Button
+                android:id="@+id/openSerial_bt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:text="打开串口" />
+
+            <Button
+                android:id="@+id/closeSerial_bt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/openSerial_bt"
+                android:layout_alignTop="@id/openSerial_bt"
+                android:text="关闭串口" />
+
+            <Button
+                android:id="@+id/sendSerial_bt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@id/openSerial_bt"
+                android:layout_below="@id/openSerial_bt"
+                android:text="发送数据" />
+
+            <Button
+                android:id="@+id/clear_bt"
+                android:layout_marginLeft="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/sendSerial_bt"
+                android:layout_toRightOf="@id/sendSerial_bt"
+                android:text="清空数据" />
+        </RelativeLayout>
     </LinearLayout>
 
 </LinearLayout>
